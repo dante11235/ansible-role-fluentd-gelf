@@ -1,0 +1,65 @@
+---
+- name: System details
+  debug:
+    msg: "{{ ansible_facts['lsb']['release'] }}"
+
+- name: Detect Ubuntu Xenial
+  shell: echo "16.04"
+  register: ubuntu_version
+  when: ansible_facts['lsb']['release'] == "16.04"
+
+- name: Detect Ubuntu Bionic
+  shell: echo "18.04"
+  register: ubuntu_version
+  when: ansible_facts['lsb']['release'] == "18.04"
+
+- name: Detect Ubuntu Focal
+  shell: echo "20.04"
+  register: ubuntu_version
+  when: ansible_facts['lsb']['release'] == "20.04"
+
+- name: "Install fluentd - Ubuntu 16.04"
+  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent4.sh | sh
+  args:
+    warn: no
+  when: ubuntu_version.stdout == "16.04"
+
+- name: "Install fluentd - Ubuntu 18.04"
+  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent4.sh | sh
+  args:
+    warn: no
+  when: ubuntu_version.stdout == "18.04"        
+
+- name: "Install fluentd - Ubuntu 20.04"
+  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-focal-td-agent4.sh | sh
+  args:
+    warn: no
+  when: ubuntu_version.stdout == "20.04"
+
+- name: "Download GELF Plugin"
+  shell: wget -O /etc/td-agent/plugin/out_gelf.rb https://raw.githubusercontent.com/emsearcy/fluent-plugin-gelf/master/lib/fluent/plugin/out_gelf.rb
+  args:
+    warn: no
+
+- name: "Install GELF Plugin"
+  shell: /usr/sbin/td-agent-gem install gelf
+  args:
+    warn: no
+
+- name: "Deploy td-agent config"
+  template:
+    src: "./templates/td-agent.conf.j2"
+    dest: /etc/td-agent/td-agent.conf
+    mode: 0644
+    owner: td-agent
+    group: td-agent
+  notify: restart fluentd
+
+- name: Copy rsyslogd configuration
+  ansible.builtin.copy:
+    src: ./files/90-fluentd.conf
+    dest: /etc/rsyslog.d/60-fluentd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart rsyslog
