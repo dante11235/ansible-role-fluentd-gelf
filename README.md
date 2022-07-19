@@ -1,4 +1,4 @@
-Ansible Role: fluentd-gelf
+Ansible Role: ansible_role_fluentd_gelf
 =========
 
 Ansible galaxy role to install fluentd with gelf support
