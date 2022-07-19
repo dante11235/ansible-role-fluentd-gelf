@@ -1,4 +1,4 @@
-Role Name
+Ansible Role: fluentd-gelf
 =========
 
 Ansible galaxy role to install fluentd with gelf support
