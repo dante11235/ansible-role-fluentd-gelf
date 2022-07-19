@@ -42,7 +42,7 @@ Example Playbook
   become: true
 
   roles:
-    - role: dante11235.fluentd-gelf
+    - role: dante11235.ansible_role_fluentd_gelf
       graylog_server: 192.168.10.10
       graylog_gelf_port: 12201
       fluentd_conf_sources: |
