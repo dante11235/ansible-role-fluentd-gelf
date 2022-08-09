@@ -3,38 +3,28 @@
   debug:
     msg: "{{ ansible_facts['lsb']['release'] }}"
 
-- name: Detect Ubuntu Xenial
-  shell: echo "16.04"
-  register: ubuntu_version
-  when: ansible_facts['lsb']['release'] == "16.04"
+- name: Install curl
+  apt:
+    pkg: curl
+    state: present
 
-- name: Detect Ubuntu Bionic
-  shell: echo "18.04"
-  register: ubuntu_version
-  when: ansible_facts['lsb']['release'] == "18.04"
-
-- name: Detect Ubuntu Focal
-  shell: echo "20.04"
-  register: ubuntu_version
-  when: ansible_facts['lsb']['release'] == "20.04"
-
-- name: "Install fluentd - Ubuntu 16.04"
+- name: "Install fluentd - Ubuntu 16.04 yes"
   shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent4.sh | sh
   args:
     warn: no
-  when: ubuntu_version.stdout == "16.04"
+  when: ansible_facts['lsb']['release'] == "16.04"
 
 - name: "Install fluentd - Ubuntu 18.04"
   shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent4.sh | sh
   args:
     warn: no
-  when: ubuntu_version.stdout == "18.04"        
+  when: ansible_facts['lsb']['release'] == "18.04"
 
 - name: "Install fluentd - Ubuntu 20.04"
   shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-focal-td-agent4.sh | sh
   args:
     warn: no
-  when: ubuntu_version.stdout == "20.04"
+  when: ansible_facts['lsb']['release'] == "20.04"
 
 - name: "Download GELF Plugin"
   shell: wget -O /etc/td-agent/plugin/out_gelf.rb https://raw.githubusercontent.com/emsearcy/fluent-plugin-gelf/master/lib/fluent/plugin/out_gelf.rb
