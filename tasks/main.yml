@@ -1,46 +1,52 @@
 ---
 - name: System details
-  debug:
+  ansible.builtin.debug:
     msg: "{{ ansible_facts['lsb']['release'] }}"
 
 - name: Install curl
-  apt:
+  ansible.builtin.apt:
     pkg: curl
     state: present
 
 - name: "Install fluentd - Ubuntu 16.04 yes"
-  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent4.sh | sh
+  ansible.builtin.shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent4.sh | sh
   args:
-    warn: no
+    warn: false
   when: ansible_facts['lsb']['release'] == "16.04"
 
 - name: "Install fluentd - Ubuntu 18.04"
-  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent4.sh | sh
+  ansible.builtin.shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent4.sh | sh
   args:
-    warn: no
+    warn: false
   when: ansible_facts['lsb']['release'] == "18.04"
 
 - name: "Install fluentd - Ubuntu 20.04"
-  shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-focal-td-agent4.sh | sh
+  ansible.builtin.shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-focal-td-agent4.sh | sh
   args:
-    warn: no
+    warn: false
   when: ansible_facts['lsb']['release'] == "20.04"
 
-- name: "Download GELF Plugin"
-  shell: wget -O /etc/td-agent/plugin/out_gelf.rb https://raw.githubusercontent.com/emsearcy/fluent-plugin-gelf/master/lib/fluent/plugin/out_gelf.rb
+- name: "Install fluentd - Ubuntu 22.04"
+  ansible.builtin.shell: curl -fsSL https://toolbelt.treasuredata.com/sh/install-ubuntu-jammy-td-agent4.sh | sh
   args:
-    warn: no
+    warn: false
+  when: ansible_facts['lsb']['release'] == "22.04"
+
+- name: "Download GELF Plugin"
+  ansible.builtin.shell: wget -O /etc/td-agent/plugin/out_gelf.rb https://raw.githubusercontent.com/emsearcy/fluent-plugin-gelf/master/lib/fluent/plugin/out_gelf.rb
+  args:
+    warn: false
 
 - name: "Install GELF Plugin"
-  shell: /usr/sbin/td-agent-gem install gelf
+  ansible.builtin.shell: /usr/sbin/td-agent-gem install gelf
   args:
-    warn: no
+    warn: false
 
 - name: "Deploy td-agent config"
-  template:
+  ansible.builtin.template:
     src: "./templates/td-agent.conf.j2"
     dest: /etc/td-agent/td-agent.conf
-    mode: 0644
+    mode: "0644"
     owner: td-agent
     group: td-agent
   notify: restart fluentd
@@ -51,5 +57,5 @@
     dest: /etc/rsyslog.d/60-fluentd.conf
     owner: root
     group: root
-    mode: '0644'
+    mode: "0644"
   notify: restart rsyslog

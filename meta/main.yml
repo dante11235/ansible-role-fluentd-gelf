@@ -1,8 +1,11 @@
 galaxy_info:
-  author: Roman Zelenaj
+  author: dante11235
   description: Freelance Network & DevOps & Software Engineer
 
-  # If the issue tracker for your role is not on github, uncomment the
+  role_name: ansible_role_fluentd_gelf
+  namespace: dante11235
+
+  # If the issue tracker for your role is not on GitHub, uncomment the
   # next line and provide a value
   # issue_tracker_url: http://example.com/issue/tracker
 
@@ -49,4 +52,3 @@ galaxy_info:
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
-  
