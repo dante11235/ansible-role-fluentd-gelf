@@ -1,5 +1,6 @@
 ---
-- hosts: localhost
+- name: Deploy fluentd with GELF
+  hosts: localhost
   remote_user: root
   roles:
-    - dante11235.fluentd-gelf
+    - dante11235.ansible_role_fluentd_gelf

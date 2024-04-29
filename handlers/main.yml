@@ -1,6 +1,6 @@
 ---
 - name: restart fluentd
-  service: name={{ fluentd_service_name }} state=restarted
+  ansible.builtin.service: name={{ fluentd_service_name }} state=restarted
 
 - name: restart rsyslog
   service: name=rsyslog state=restarted
